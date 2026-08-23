@@ -1,0 +1,34 @@
+# FairReL default configuration (paper Sec. 4.1 and supplementary Sec. C).
+# CLIP ViT-L/14 backbone, SVD rank r = 1 on all self-attention projections.
+
+model:
+  backbone: ViT-L-14
+  pretrained: openai
+  svd_rank: 1            # r in Eq. (2); frozen rank = min(m, n) - r = 1023
+  pooling: cls           # "cls" matches the Effort codebase pooler output;
+                         # "mean" is average pooling over patch tokens
+
+loss:
+  lambda_orth: 0.1       # orthogonality regulariser weight (Eq. 3)
+  lambda_gcwd: 0.5       # lambda_G (Eq. 9)
+  lambda_slma: 0.5       # lambda_S (Eq. 9)
+  gcwd:
+    levels: 2            # DWT depth J; L = 3J + 1 = 7 sub-bands
+    temperature: 0.5     # softmax temperature tau (Eq. 6)
+    normalize_energy: true   # one shared constant; relative D_l match the paper
+  slma:
+    ema_decay: 0.9       # EMA fallback for under-populated (y, g) cells
+    min_count: 2
+
+train:
+  epochs: 10
+  batch_size: 64         # group-balanced: ~10-12 samples per subgroup per batch
+  lr: 1.0e-3
+  weight_decay: 4.0e-3
+  input_size: 224
+  num_workers: 8
+  amp: true              # bfloat16 autocast
+  seed: 0
+
+eval:
+  tpr_anchor: 0.90       # threshold fixed on FF++ val at TPR = 0.90
