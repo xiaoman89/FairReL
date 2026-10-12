@@ -65,8 +65,12 @@ Required files:
   identity) appearing in both train and test inflate every metric.
 - `celebdf_test.csv`, `dfd_test.csv`, `dfdc_test.csv` — full test sets
 
-## 4. Expected sample counts
+## 4. Dataset splits and sample counts
 
+The FF++ (c23) train/validation/test assignment follows the annotated data
+release of [Lin et al.](https://github.com/Purdue-M2/Fairness-Generalization):
+60/20/20 at the video level with no identity overlap between splits.
+Celeb-DF, DFD and DFDC are used in full as unseen test sets.
 After excluding "Others", the splits used in the paper contain:
 
 | Dataset | Train | Val | Test |
@@ -76,4 +80,16 @@ After excluding "Others", the splits used in the paper contain:
 | DFD | — | — | 20,032 |
 | DFDC | — | — | 63,225 |
 
-Per-subgroup counts are listed in Table S2 of the supplementary material.
+Per-subgroup counts (for FF++, totals across train/val/test; "—" means the
+subgroup does not exist in that dataset's annotations):
+
+| Dataset | M-A | M-W | M-B | F-A | F-W | F-B | Total |
+|---------|-----|-----|-----|-----|-----|-----|-------|
+| FF++ | 2,475 | 31,281 | 1,468 | 8,013 | 31,281 | 1,111 | 75,629 |
+| Celeb-DF | — | 81,194 | 600 | — | 5,389 | 30 | 87,213 |
+| DFD | — | 7,784 | 6,482 | — | 4,127 | 1,639 | 20,032 |
+| DFDC | 2,144 | 21,755 | 9,603 | 1,915 | 18,502 | 9,306 | 63,225 |
+
+For comparisons at the fixed operating point, remember that all FPR-based
+metrics use a single threshold calibrated on the FF++ validation split at
+TPR = 0.90 and reused unchanged on every test set (Sec. 4.1 of the paper).
